@@ -1,11 +1,11 @@
 const btn = document.querySelector("button");
 const box = document.querySelector("#box");
 const speed = 500;
-let num = 0;
 let startTime = null;
+let timer = null;
 
 btn.addEventListener("click",e=>{
-    requestAnimationFrame(move);
+    timer = requestAnimationFrame(move);
 
     startTime = performance.now();
     console.log(startTime);
@@ -17,14 +17,19 @@ function move(time){
     //timeLast는 버튼을 클릭한 시점부터 move함수가  반복되는 누적 시간값을 나타냄
 
     let timeLast = time-startTime;
-    console.log(timeLast);
 
+    //진행률 (반복된 누적시간 / 전체시간)
+    let progress = timeLast/speed;
 
-    if(num <= 200) {
-        num ++;
-        requestAnimationFrame(move)
-    }else {
-        num = 200;
+    //약간의 오차가 발생하더라도 진행률을 0-1까지로 보정
+    if(progress < 0) progress = 0;
+    if(progress > 1) progress = 1;
+
+    if(progress < 1){
+        timer = requestAnimationFrame(move);
+    }else{
+        cancelAnimationFrame(timer);
     }
-    box.style.marginLeft = num+'px';
+
+    console.log(`현재반복까지 걸린시간: ${timeLast} / 현재 반복까지의 진행률: ${progress}`);
 }
