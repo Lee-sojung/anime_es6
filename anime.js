@@ -1,35 +1,34 @@
 const btn = document.querySelector("button");
 const box = document.querySelector("#box");
-const speed = 500;
-let startTime = null;
-let timer = null;
+
 
 btn.addEventListener("click",e=>{
-    timer = requestAnimationFrame(move);
-
-    startTime = performance.now();
-    console.log(startTime);
+    //animate함수 호출시 첫번째 인수로 선택자
+    //두번쨰 인수로 가가 속성명,속성값,지속시간을 객체로 감싸서 인수로 전달
+    animate(box,{
+        prop: 'margin-left',
+        value: 200,
+        duration: 800
+    })
 })
 
-function move(time){
-    //move함수가 반복이 될때마다 누적시간 time에서
-    //버튼을 클릭한 시점의 시간인 startTime을 빼주면
-    //timeLast는 버튼을 클릭한 시점부터 move함수가  반복되는 누적 시간값을 나타냄
+function animate(selector, option){
+    const startTime = performance.now();
+    requestAnimationFrame(move);
 
-    let timeLast = time-startTime;
-
-    //진행률 (반복된 누적시간 / 전체시간)
-    let progress = timeLast/speed;
-
-    //약간의 오차가 발생하더라도 진행률을 0-1까지로 보정
-    if(progress < 0) progress = 0;
-    if(progress > 1) progress = 1;
-
-    if(progress < 1){
-        timer = requestAnimationFrame(move);
-    }else{
-        cancelAnimationFrame(timer);
+    function move(time){
+        let timeLast = time-startTime;
+        let progress = timeLast/option.duration;
+    
+        if(progress < 0) progress = 0;
+        if(progress > 1) progress = 1;
+        if(progress < 1) requestAnimationFrame(move);
+        console.log(timeLast);
+    
+        //첫번째 인수로 받은 선택자의 스타일 값은 연관배열형태로 지정하고
+        //변할 value값에 progress를 곱해서 단계별로 모션이 일어나도록 설정
+        selector.style[option.prop] = `${option.value*progress}px`
+        //option값은 prop,value,duration을 포함한 값
     }
-
-    console.log(`현재반복까지 걸린시간: ${timeLast} / 현재 반복까지의 진행률: ${progress}`);
 }
+
