@@ -8,7 +8,7 @@ btn.addEventListener("click",e=>{
     animate(box,{
         prop: 'margin-left',
         value: 200,
-        duration: 800,
+        duration: 1000,
         callback: ()=>{
             animate(box,{
                 prop: 'margin-top',
@@ -24,9 +24,22 @@ function animate(selector, option){
     //만약에 디폴트로 설정할 값이 많으면 전개연산자로 처리
     if(!option.duration) option.duration = 500
     const startTime = performance.now();
-    requestAnimationFrame(move);
 
-    function move(time){
+    //selector의 기존 속성값을 구함
+    const currentValue = parseInt(getComputedStyle(selector)[option.prop]);
+    
+    //만약 현재값과 앞으로 변경될 값이 같으면 코드를 실행하지 않고 바로 종료
+    if(option.value === currentValue) return;
+
+    //만약 앞으로 변경될 값이 현재값보다 더 크면 plus함수를 호출
+    if(option.vaule > currentValue) requestAnimationFrame(plus);
+
+    //만약 앞으로 변경될 값이 현재값보다 더 작으면 minus함수를 호출
+    if(option.value < currentValue) requestAnimationFrame(minus);
+
+    requestAnimationFrame(plus);
+
+    function plus(time){
         let timeLast = time-startTime;
         let progress = timeLast/option.duration;
     
@@ -34,18 +47,16 @@ function animate(selector, option){
         if(progress > 1) progress = 1;
 
         if(progress < 1){
-            requestAnimationFrame(move);
+            requestAnimationFrame(plus);
         //기존모션이 끝났을 때
         }else{
             //옵션 객체에서 callback 프로퍼티 값이 있을때에만 해당함수 호출
             if(option.callback) option.callback();
         } 
-        console.log(timeLast);
     
-        //첫번째 인수로 받은 선택자의 스타일 값은 연관배열형태로 지정하고
-        //변할 value값에 progress를 곱해서 단계별로 모션이 일어나도록 설정
-        selector.style[option.prop] = `${option.value*progress}px`
-        //option값은 prop,value,duration을 포함한 값
+        //현재 value값 + ((타겟value - 현재 value)*progress)
+        let result = currentValue + ((option.value = currentValue)*progress);
+        selector.style[option.prop] = `${result}px`;
     }
 }
 
