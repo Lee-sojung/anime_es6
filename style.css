@@ -14,12 +14,12 @@ button{
 }
 
 section{
-  width: 1000px;
+  width: 100%;
   border: 1px solid #ddd;
 }
 section #box{
   width: 100px;
   height: 100px;
   background: aqua;
-  margin-left: 50%;
+  margin-left: 0%;
 }

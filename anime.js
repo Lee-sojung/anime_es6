@@ -1,16 +1,25 @@
-const btn = document.querySelector("button");
+const btn1 = document.querySelectorAll("button")[0];
+const btn2 = document.querySelectorAll("button")[1];
 const box = document.querySelector("#box");
 
 
-btn.addEventListener("click",()=>{
+btn1.addEventListener("click",()=>{
     //animate함수 호출시 첫번째 인수로 선택자
     //두번쨰 인수로 가가 속성명,속성값,지속시간을 객체로 감싸서 인수로 전달
     animate(box,{
         prop: 'margin-left',
-        value: "10%",
+        value: "20%",
         duration: 1000
     })
-})
+});
+
+btn2.addEventListener("click",()=>{
+    animate(box,{
+        prop: 'margin-left',
+        value: "50%",
+        duration: 500
+    })
+});
 
 function animate(selector, option){
     //옵션에 duration 값이 없더라도 default값으로 500 지정
