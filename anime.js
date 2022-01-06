@@ -27,7 +27,9 @@ function animate(selector, option){
     if(!option.duration) option.duration = 500;
     const startTime = performance.now();
 
+    //초기 스타일값 가져옴
     let currentValue = parseFloat(getComputedStyle(selector)[option.prop]); 
+
 
 
     /*
@@ -36,9 +38,6 @@ function animate(selector, option){
     10이라는 값을 가지고 오는게 아니라 10%위치에 해당하는 px값이 변환돼서 반환됨
     -->해결방법 : px로 반환된 값을 다시 백분율로 변경해서 다시 반환
     */
-
-
-
 
     //속성값이 문자열인지에 따라 option.value값을 실수로 보정
     let isString = typeof option.value;
