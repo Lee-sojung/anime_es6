@@ -35,8 +35,9 @@ function animate(selector, option){
     //만약 이동할 타겟값이 문자값(%)이면
     if(isString==='string'){
         //기존의 px단위의 currentValue값을 다시 백분율 단위로 변경
-        const winW = window.innerWidth;
-        currentValue= (currentValue/winW) * 100;
+        //백분율 구할때 window의 넓이값이 아닌 부모요소의 넓이값을 베이스로 연산
+        const parentWid = parseInt(getComputedStyle(selector.parentElement).width);
+        currentValue= (currentValue/parentWid) * 100;
         option.value = parseFloat(option.value);
     } 
     
