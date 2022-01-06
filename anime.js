@@ -7,7 +7,7 @@ btn.addEventListener("click",()=>{
     //두번쨰 인수로 가가 속성명,속성값,지속시간을 객체로 감싸서 인수로 전달
     animate(box,{
         prop: 'margin-left',
-        value: "50%",
+        value: "10%",
         duration: 1000
     })
 })
@@ -17,13 +17,28 @@ function animate(selector, option){
     //만약에 디폴트로 설정할 값이 많으면 전개연산자로 처리
     if(!option.duration) option.duration = 500
     const startTime = performance.now();
-
     //selector의 기존 속성값을 구함 pasreInt -> 정수값변경
-    const currentValue = parseInt(getComputedStyle(selector)[option.prop]);
+    let currentValue = parseInt(getComputedStyle(selector)[option.prop]);
+
+    /*
+    현재 css파일에서 선택요소의 위치값이 %일때 문제점
+    --해당 값을 getComputedStyle로 가져오기 때문에 실제 10%일경우
+    10이라는 값을 가지고 오는게 아니라 10%위치에 해당하는 px값이 변환돼서 반환됨
+    -->해결방법 : px로 반환된 값을 다시 백분율로 변경해서 다시 반환
+    */
+
+
+
 
     //속성값이 문자열인지에 따라 option.value값을 실수로 보정
     let isString = typeof option.value;
-    if(isString==='string') option.value = parseFloat(option.value);
+    //만약 이동할 타겟값이 문자값(%)이면
+    if(isString==='string'){
+        //기존의 px단위의 currentValue값을 다시 백분율 단위로 변경
+        const winW = window.innerWidth;
+        currentValue= (currentValue/winW) * 100;
+        option.value = parseFloat(option.value);
+    } 
     
     //만약 현재값과 앞으로 변경될 값이 같으면 코드를 실행하지 않고 바로 종료
     if(option.value === currentValue) return;
