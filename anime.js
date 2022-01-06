@@ -23,16 +23,19 @@ function animate(selector, option){
     
     //만약 현재값과 앞으로 변경될 값이 같으면 코드를 실행하지 않고 바로 종료
     if(option.value === currentValue) return;
+    //기존값에 따라 알아서 값이 감소, 증가 되므로
+    //조건식 없이 두개의 값이 같지만 않으면 무조건 run함수 호출
+    requestAnimationFrame(run);
+    
+    /*
+    if(option.value > currentValue) requestAnimationFrame(run);
+    if(option.value < currentValue) requestAnimationFrame(run);
+    */
 
-    //만약 앞으로 변경될 값이 현재값보다 더 크면 plus함수를 호출
-    if(option.value > currentValue) requestAnimationFrame(plus);
-
-    //만약 앞으로 변경될 값이 현재값보다 더 작으면 minus함수를 호출
-    if(option.value < currentValue) requestAnimationFrame(minus);
 
 
 
-    function plus(time){
+    function run(time){
         let timeLast = time-startTime;
         let progress = timeLast/option.duration;
     
@@ -40,7 +43,7 @@ function animate(selector, option){
         if(progress > 1) progress = 1;
 
         if(progress < 1){
-            requestAnimationFrame(plus);
+            requestAnimationFrame(run);
         //기존모션이 끝났을 때
         }else{
             //옵션 객체에서 callback 프로퍼티 값이 있을때에만 해당함수 호출
@@ -52,24 +55,5 @@ function animate(selector, option){
         selector.style[option.prop] = `${result}px`;
     }
 
-    function minus(time){
-        let timeLast = time-startTime;
-        let progress = timeLast/option.duration;
-    
-        if(progress < 0) progress = 0;
-        if(progress > 1) progress = 1;
-
-        if(progress < 1){
-            requestAnimationFrame(minus);
-        //기존모션이 끝났을 때
-        }else{
-            //옵션 객체에서 callback 프로퍼티 값이 있을때에만 해당함수 호출
-            if(option.callback) option.callback();
-        } 
-    
-        //현재 value값 + ((타겟value - 현재 value)*progress)
-        let result = currentValue - ((currentValue - option.value)*progress);
-        selector.style[option.prop] = `${result}px`;
-    }
 }
 
