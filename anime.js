@@ -1,73 +1,65 @@
-/*
-    window.scrollY : 현재 브라우저의 y축 스크롤 거리값 반환
-    window.scroll(가로축위치값, 세로축위치값);
-*/
+class Anime {
+    constructor(selector, option) {
+        this.selector = selector;
+        //전개 연산자로 디폴트 객체를 합쳐서 새로운 객체를 반환
+        this.option = {duration: 5000, ... option}
+        console.log(this.option);
+        this.startTime = performance.now();
+        this.currentValue = null;
 
+        if (this.option.prop === "scroll") {
+            this.currentValue = this.selector.scrollY || this.selector.pageYOffset;
+        } else {
+            this.currentValue = parseFloat(getComputedStyle(this.selector)[this.option.prop]);
+        }
 
-const btn = document.querySelector("button");
-const box = document.querySelector("#box");
+        this.isString = typeof this.option.value;
+        if (this.isString === 'string') {
+            const parentWid = parseInt(getComputedStyle(this.selector.parentElement).width);
+            const parentHt = parseInt(getComputedStyle(this.selector.parentElement).height);
+            const x = ['margin-left', 'margin-right', 'left', 'right', 'width'];
+            const y = ['margin-top', 'margin-bottom', 'top', 'bottom', 'height'];
 
-btn.addEventListener("click", e => {
-    animate(window, {
-        prop: 'scroll',
-        value: 500,
-        duration: 1000
-    })
-});
+            for (let prop of x) {
+                if (this.option.prop === prop) this.currentValue = (this.currentValue / parentWid) * 100;
+            }
+            for (let prop of y) {
+                if (this.option.prop === prop) this.currentValue = (this.currentValue / parentHt) * 100;
+            }
 
-function animate(selector, option) {
-    if (!option.duration) option.duration = 500;
-    const startTime = performance.now();
+            this.option.value = parseFloat(this.option.value);
+        }
 
-    let currentValue = null
-    if (option.prop === "scroll") {
-        currentValue = selector.scrollY || selector.pageYOffset;
-    } else {
-        currentValue = parseFloat(getComputedStyle(selector)[option.prop]);
+        if (this.option.value === this.currentValue) return;
+        //프로토타입 메서드에 인수를 전달할때는 익명함수로 감싸서 전달
+        requestAnimationFrame(time=>this.run(time));
     }
 
-    let isString = typeof option.value;
-    if (isString === 'string') {
-        const parentWid = parseInt(getComputedStyle(selector.parentElement).width);
-        const parentHt = parseInt(getComputedStyle(selector.parentElement).height);
-        const x = ['margin-left', 'margin-right', 'left', 'right', 'width'];
-        const y = ['margin-top', 'margin-bottom', 'top', 'bottom', 'height'];
+    run(time) {
+        let timeLast = time - this.startTime;
+        let progress = timeLast / this.option.duration;
 
-        for (let prop of x) {
-            if (option.prop === prop) currentValue = (currentValue / parentWid) * 100;
-        }
-        for (let prop of y) {
-            if (option.prop === prop) currentValue = (currentValue / parentHt) * 100;
-        }
-        option.value = parseFloat(option.value);
-    }
-
-    if (option.value === currentValue) return;
-    requestAnimationFrame(run);
-
-    function run(time) {
-        let timeLast = time - startTime;
-        let progress = timeLast / option.duration;
         if (progress < 0) progress = 0;
         if (progress > 1) progress = 1;
         if (progress < 1) {
-            requestAnimationFrame(run);
+            //프로토타입 메서드에 인수를 전달할때는 익명함수로 감싸서 전달
+            requestAnimationFrame(time=>this.run(time));
         } else {
-            if (option.callback) option.callback();
+            if (this.option.callback) this.option.callback();
         }
-        let result = currentValue + ((option.value - currentValue) * progress);
+        let result = this.currentValue + ((this.option.value - this.currentValue) * progress);
 
-        if (isString === "string") {
-            selector.style[option.prop] = `${result}%`;
+        if (this.isString === "string") {
+            this.selector.style[this.option.prop] = `${result}%`;
         }
-        else if (option.prop === "opacity") {
-            selector.style[option.prop] = result;
+        else if (this.option.prop === "opacity") {
+            this.selector.style[this.option.prop] = result;
         }
-        else if (option.prop === "scroll") {
+        else if (this.option.prop === "scroll") {
             window.scroll(0, result);
         }
         else {
-            selector.style[option.prop] = `${result}px`;
+            this.selector.style[this.option.prop] = `${result}px`;
         }
     }
 }

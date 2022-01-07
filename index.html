@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,23 @@
   <title>Anime</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="anime.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      const btn = document.querySelector("button");
+      const box = document.querySelector("#box");
+
+      btn.addEventListener("click", e => {
+
+        new Anime(box, {
+          prop: 'margin-left',
+          value: 500,
+          // duration: 1000
+        })
+      });
+    })
+  </script>
 </head>
+
 <body>
   <!-- 
     모니터 화면 주사율 : hz (보통의 모니터는 60hz)
@@ -45,4 +62,5 @@
   </section>
 
 </body>
+
 </html>
