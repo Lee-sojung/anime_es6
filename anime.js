@@ -7,8 +7,8 @@ btn1.addEventListener("click",()=>{
     //animate함수 호출시 첫번째 인수로 선택자
     //두번쨰 인수로 가가 속성명,속성값,지속시간을 객체로 감싸서 인수로 전달
     animate(box,{
-        prop: 'opacity',
-        value: 0.2,
+        prop: 'top',
+        value: "50%",
         duration: 1000
     })
 });
@@ -46,7 +46,18 @@ function animate(selector, option){
         //기존의 px단위의 currentValue값을 다시 백분율 단위로 변경
         //백분율 구할때 window의 넓이값이 아닌 부모요소의 넓이값을 베이스로 연산
         const parentWid = parseInt(getComputedStyle(selector.parentElement).width);
-        currentValue= (currentValue/parentWid) * 100;
+        const parentHt = parseInt(getComputedStyle(selector.parentElement).height);
+        //퍼센트 값을 활용하는 x축에 관련된 모든 속성명에 반복처리
+        const x = ['margin-left', 'margin-right', 'left', 'right', 'width'];
+        const y = ['margin-top', 'margin-bottom', 'top', 'bottom', 'height'];
+        //해당 조건일때는 퍼센트에 해당하는 가로축값을 currentValue에 저장
+        for(let prop of x){
+            if(option.prop === prop) currentValue= (currentValue/parentWid) * 100;
+        }
+        for(let prop of y){
+            if(option.prop === prop) currentValue= (currentValue/parentHt) * 100;
+        }
+        
         option.value = parseFloat(option.value);
     } 
     
